@@ -1,0 +1,26 @@
+#!/bin/bash
+
+global_usage() {
+	cat <<EOF
+Usage: dalias <command> [<args>]
+EOF
+}
+
+add_usage() {
+	echo "dalias add"
+}
+
+list_usage() {
+	echo "dalias list"
+}
+
+command=$1
+
+case "$command" in
+	"add")
+		add_usage
+		;;
+	*)
+		global_usage
+		;;
+esac

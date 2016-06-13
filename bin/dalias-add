@@ -1,0 +1,45 @@
+#!/bin/bash
+
+set -e
+
+abort() {
+	echo "$1" >&2
+	exit 1
+}
+
+ensure_shim() {
+	[[ -d "${DALIAS_ROOT}/shims" ]] || mkdir -p "${DALIAS_ROOT}/shims"
+
+	if [[ ! -x "${DALIAS_ROOT}/shims/$dalias_command" ]]; then
+		cat << EOF > "${DALIAS_ROOT}/shims/$dalias_command"
+#!/bin/bash
+
+if [[ -x "${DALIAS_DIR}/$dalias_command" ]]; then
+	exec ${DALIAS_DIR}/$dalias_command \$@
+else
+	exec $dalias_command $@
+fi
+EOF
+		chmod +x "${DALIAS_ROOT}/shims/$dalias_command"
+	fi
+}
+
+create_local_alias() {
+	[[ -d $DALIAS_DIR ]] || mkdir -p $DALIAS_DIR
+
+	if [[ -x "$DALIAS_DIR/$dalias_command" ]]; then
+		abort "$alias_command is already aliased"
+	else
+		cat << EOF > $DALIAS_DIR/$dalias_command
+#!/bin/bash
+exec $@ "\$@"
+EOF
+		chmod +x "$DALIAS_DIR/$dalias_command"
+	fi
+}
+
+dalias_command=$1
+shift
+
+ensure_shim $@
+create_local_alias $@
