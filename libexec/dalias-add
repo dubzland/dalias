@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 set -e
 
@@ -29,13 +29,14 @@ EOF
 
 create_local_alias() {
 	alias_name="$1"
-	[[ -d ${DALIAS_LOCAL} ]] || mkdir -p ${DALIAS_LOCAL}
+	shift
+	[[ -d "${DALIAS_LOCAL}" ]] || mkdir -p "${DALIAS_LOCAL}"
 
 	if [[ -x "${DALIAS_LOCAL}/${alias_name}" ]]; then
 		echo "dalias: ${alias_name} is already aliased" >&2
 		exit 1
 	else
-		cat << EOF > ${DALIAS_LOCAL}/${alias_name}
+		cat << EOF > "${DALIAS_LOCAL}/${alias_name}"
 #!/bin/bash
 exec $@ "\$@"
 EOF
@@ -49,7 +50,10 @@ add_to_store() {
 	store_file="${DALIAS_ROOT}/links.csv"
 	[[ -f "${store_file}" ]] || touch "${store_file}"
 
-	echo "${alias_name},${DALIAS_LOCAL}/${alias_name}" >> "${store_file}"
+	rec="${alias_name},${DALIAS_LOCAL}/${alias_name}"
+	if [[ "$(grep -c "${rec}" "${store_file}")" -eq 0 ]]; then
+		echo "${alias_name},${DALIAS_LOCAL}/${alias_name}" >> "${store_file}"
+	fi
 }
 
 command="$1"

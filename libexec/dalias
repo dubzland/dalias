@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 set -e
 
@@ -18,11 +18,11 @@ fi
 export DALIAS_ROOT
 
 if [[ -z "${DALIAS_LOCAL}" ]]; then
-	DALIAS_LOCAL="$PWD/.dalias"
+	DALIAS_LOCAL="$PWD/.dalias/${USER}"
 else
-	cd "$DALIAS_LOCAL" 2>/dev/null || abort "DALIAS_DIR ($DALIAS_LOCAL) does not exist."
+	cd "${DALIAS_LOCAL}" 2>/dev/null || abort "DALIAS_LOCAL (${DALIAS_LOCAL}) does not exist."
 	DALIAS_LOCAL="$PWD"
-	cd "$OLDPWD"
+	cd "${OLDPWD}"
 fi
 export DALIAS_LOCAL
 
@@ -31,15 +31,15 @@ command="$1"
 [[ $# > 1 ]] && shift
 
 # if no command was supplied, force 'help'
-if [[ -z "$command" ]]; then
+if [[ -z "${command}" ]]; then
 	command="help"
 fi
 
-PATH=$DALIAS_ROOT/libexec:$PATH
+PATH=${DALIAS_ROOT}/libexec:${PATH}
 export PATH
 
 # check to see if the spedified command exists
-command_path="$(command -v "dalias-$command" || true)"
-[[ -n "$command_path" ]] || abort "no such command: ${command}"
+command_path="$(command -v "dalias-${command}" || true)"
+[[ -n "${command_path}" ]] || abort "no such command: ${command}"
 
-exec "$command_path" "$@"
+exec "${command_path}" "$@"

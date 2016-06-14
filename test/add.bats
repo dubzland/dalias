@@ -35,7 +35,8 @@ load test_helper
 	run dalias-add foo bar
 	assert_success
 	assert [ -f "${DALIAS_ROOT}/links.csv" ]
-	assert_equal $(grep "foo," "${DALIAS_ROOT}/links.csv" || true) "foo,${DALIAS_LOCAL}/foo"
+	assert_equal $(grep "foo," "${DALIAS_ROOT}/links.csv" || true) \
+		"foo,${DALIAS_LOCAL}/foo"
 }
 
 @test "fails with existing local alias" {

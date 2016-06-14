@@ -1,8 +1,9 @@
 if [[ -z "${DALIAS_TEST_DIR}" ]]; then
+	export USER="test_user"
 	DALIAS_TEST_DIR="${BATS_TMPDIR}/dalias"
 	export DALIAS_TEST_DIR="$(mktemp -d "${DALIAS_TEST_DIR}.XXX")" # 2>/dev/null || echo "$DALIAS_TEST_DIR")"
 	export DALIAS_ROOT="${DALIAS_TEST_DIR}/root"
-	export DALIAS_LOCAL="${DALIAS_TEST_DIR}/local"
+	export DALIAS_LOCAL="${DALIAS_TEST_DIR}/${USER}"
 	export HOME="${DALIAS_TEST_DIR}/home"
 
 	PATH=/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin
@@ -12,10 +13,6 @@ if [[ -z "${DALIAS_TEST_DIR}" ]]; then
 	PATH="${DALIAS_ROOT}/shims:$PATH"
 	export PATH
 fi
-
-# setup() {
-# 	return 0
-# }
 
 teardown() {
 	rm -rf "${DALIAS_TEST_DIR}"
