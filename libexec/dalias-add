@@ -30,17 +30,18 @@ EOF
 }
 
 create_local_alias() {
-	[[ -d $DALIAS_DIR ]] || mkdir -p $DALIAS_DIR
+	[[ -d $DALIAS_LOCAL ]] || mkdir -p $DALIAS_LOCAL
 
-	if [[ -x "$DALIAS_DIR/$dalias_command" ]]; then
+	if [[ -x "$DALIAS_LOCAL/$dalias_command" ]]; then
 		abort "$alias_command is already aliased"
 	else
-		cat << EOF > $DALIAS_DIR/$dalias_command
+		cat << EOF > $DALIAS_LOCAL/$dalias_command
 #!/bin/bash
 exec $@ "\$@"
 EOF
-		chmod +x "$DALIAS_DIR/$dalias_command"
+		chmod +x "$DALIAS_LOCAL/$dalias_command"
 	fi
+	return 0
 }
 
 dalias_command=$1

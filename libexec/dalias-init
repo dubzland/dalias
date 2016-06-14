@@ -1,3 +1,11 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-echo "export PATH=$DALIAS_ROOT/shims:$PATH"
+set -e
+
+if [[ ! -d "$DALIAS_ROOT/shims" ]]; then
+	mkdir -p "$DALIAS_ROOT/shims"
+fi
+
+cat <<EOS
+export PATH="${DALIAS_ROOT}/shims:\${PATH}"
+EOS

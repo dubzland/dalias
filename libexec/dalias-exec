@@ -10,8 +10,8 @@ abort() {
 dalias_command=$1
 shift
 
-if [[ -x "$PWD/.dalias/$dalias_command" ]]; then
-	exec $PWD/.dalias/$dalias_command $@
+if [[ -x "$DALIAS_LOCAL/$dalias_command" ]]; then
+	exec $DALIAS_LOCAL/$dalias_command $@
 fi
 
 # If we're here, there was no local alias defined.

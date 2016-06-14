@@ -14,14 +14,14 @@ else
 fi
 export DALIAS_ROOT
 
-if [[ -z "${DALIAS_DIR}" ]]; then
-	DALIAS_DIR="$PWD/.dalias"
+if [[ -z "${DALIAS_LOCAL}" ]]; then
+	DALIAS_LOCAL="$PWD/.dalias"
 else
-	cd "$DALIAS_DIR" 2>/dev/null || abort "DALIAS_DIR ($DALIAS_DIR) does not exist."
-	DALIAS_DIR="$PWD"
+	cd "$DALIAS_LOCAL" 2>/dev/null || abort "DALIAS_DIR ($DALIAS_LOCAL) does not exist."
+	DALIAS_LOCAL="$PWD"
 	cd "$OLDPWD"
 fi
-export DALIAS_DIR
+export DALIAS_LOCAL
 
 # Extract the command
 command="$1"
