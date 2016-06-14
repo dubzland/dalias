@@ -1,0 +1,29 @@
+#!/bin/bash
+
+set -e
+
+abort() {
+	echo "$1" >&2
+	exit 1
+}
+
+dalias_command=$1
+shift
+
+if [[ -x "$PWD/.dalias/$dalias_command" ]]; then
+	exec $PWD/.dalias/$dalias_command $@
+fi
+
+# If we're here, there was no local alias defined.
+# Remove the shim directory from the path and exec
+orig_path="$PATH"
+PATH=$(echo $PATH | sed -e 's|:.*\.dalias/shims[^:]*||' | sed -e 's|^[^:]+\.dalias/shims:||')
+cmd=$(command -v ${dalias_command} || true)
+if [[ -n "$cmd" ]]; then
+	PATH="$orig_path"
+	exec $cmd "$@"
+fi
+
+# Nothing left to do.  Bail.
+echo "dalias: $dalias_command: command not found" >&2
+exit 127

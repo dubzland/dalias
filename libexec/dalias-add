@@ -10,17 +10,22 @@ abort() {
 ensure_shim() {
 	[[ -d "${DALIAS_ROOT}/shims" ]] || mkdir -p "${DALIAS_ROOT}/shims"
 
-	if [[ ! -x "${DALIAS_ROOT}/shims/$dalias_command" ]]; then
-		cat << EOF > "${DALIAS_ROOT}/shims/$dalias_command"
+	if [[ ! -x "${DALIAS_ROOT}/shims/dalias-exec-shim" ]]; then
+		cat << EOF > "${DALIAS_ROOT}/shims/dalias-exec-shim"
 #!/bin/bash
 
-if [[ -x "${DALIAS_DIR}/$dalias_command" ]]; then
-	exec ${DALIAS_DIR}/$dalias_command \$@
-else
-	exec $dalias_command $@
-fi
+set -e
+
+cmd=\$(basename \$0)
+
+exec dalias exec \$cmd "\$@"
 EOF
-		chmod +x "${DALIAS_ROOT}/shims/$dalias_command"
+		chmod +x "${DALIAS_ROOT}/shims/dalias-exec-shim"
+	fi
+
+	if [[ ! -h "${DALIAS_ROOT}/shims/$dalias_command" ]]; then
+		ln -sf "${DALIAS_ROOT}/shims/dalias-exec-shim" "${DALIAS_ROOT}/shims/$dalias_command"
+		hash -r
 	fi
 }
 
