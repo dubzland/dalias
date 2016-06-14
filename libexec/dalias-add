@@ -2,16 +2,14 @@
 
 set -e
 
-abort() {
-	echo "$1" >&2
-	exit 1
-}
-
 ensure_shim() {
-	[[ -d "${DALIAS_ROOT}/shims" ]] || mkdir -p "${DALIAS_ROOT}/shims"
+	shim_path="${DALIAS_ROOT}/shims"
+	alias_name="$1"
 
-	if [[ ! -x "${DALIAS_ROOT}/shims/dalias-exec-shim" ]]; then
-		cat << EOF > "${DALIAS_ROOT}/shims/dalias-exec-shim"
+	[[ -d "${shim_path}" ]] || mkdir -p "${shim_path}"
+
+	if [[ ! -x "${shim_path}/dalias-exec-shim" ]]; then
+		cat << EOF > "${shim_path}/dalias-exec-shim"
 #!/bin/bash
 
 set -e
@@ -20,32 +18,44 @@ cmd=\$(basename \$0)
 
 exec dalias exec \$cmd "\$@"
 EOF
-		chmod +x "${DALIAS_ROOT}/shims/dalias-exec-shim"
+		chmod +x "${shim_path}/dalias-exec-shim"
 	fi
 
-	if [[ ! -h "${DALIAS_ROOT}/shims/$dalias_command" ]]; then
-		ln -sf "${DALIAS_ROOT}/shims/dalias-exec-shim" "${DALIAS_ROOT}/shims/$dalias_command"
+	if [[ ! -h "${shim_path}/${alias_name_name}" ]]; then
+		ln -sf "${shim_path}/dalias-exec-shim" "${shim_path}/${alias_name}"
 		hash -r
 	fi
 }
 
 create_local_alias() {
-	[[ -d $DALIAS_LOCAL ]] || mkdir -p $DALIAS_LOCAL
+	alias_name="$1"
+	[[ -d ${DALIAS_LOCAL} ]] || mkdir -p ${DALIAS_LOCAL}
 
-	if [[ -x "$DALIAS_LOCAL/$dalias_command" ]]; then
-		abort "$alias_command is already aliased"
+	if [[ -x "${DALIAS_LOCAL}/${alias_name}" ]]; then
+		echo "dalias: ${alias_name} is already aliased" >&2
+		exit 1
 	else
-		cat << EOF > $DALIAS_LOCAL/$dalias_command
+		cat << EOF > ${DALIAS_LOCAL}/${alias_name}
 #!/bin/bash
 exec $@ "\$@"
 EOF
-		chmod +x "$DALIAS_LOCAL/$dalias_command"
+		chmod +x "${DALIAS_LOCAL}/${alias_name}"
 	fi
 	return 0
 }
 
-dalias_command=$1
-shift
+add_to_store() {
+	alias_name="$1"
+	store_file="${DALIAS_ROOT}/links.csv"
+	[[ -f "${store_file}" ]] || touch "${store_file}"
 
-ensure_shim $@
-create_local_alias $@
+	echo "${alias_name},${DALIAS_LOCAL}/${alias_name}" >> "${store_file}"
+}
+
+command="$1"
+shift
+target="$@"
+
+ensure_shim "${command}"
+create_local_alias "${command}" "${target}"
+add_to_store "${command}"

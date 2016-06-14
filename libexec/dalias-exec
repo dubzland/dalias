@@ -2,28 +2,23 @@
 
 set -e
 
-abort() {
-	echo "$1" >&2
-	exit 1
-}
-
-dalias_command=$1
+alias_name="$1"
 shift
 
-if [[ -x "$DALIAS_LOCAL/$dalias_command" ]]; then
-	exec $DALIAS_LOCAL/$dalias_command $@
+if [[ -x "${DALIAS_LOCAL}/${alias_name}" ]]; then
+	exec "${DALIAS_LOCAL}/${alias_name}" $@
 fi
 
 # If we're here, there was no local alias defined.
 # Remove the shim directory from the path and exec
-orig_path="$PATH"
-PATH=$(echo $PATH | sed -e 's|:.*\.dalias/shims[^:]*||' | sed -e 's|^[^:]+\.dalias/shims:||')
-cmd=$(command -v ${dalias_command} || true)
-if [[ -n "$cmd" ]]; then
-	PATH="$orig_path"
-	exec $cmd "$@"
+orig_path="${PATH}"
+PATH=$(echo ${PATH} | sed -e "s|:${DALIAS_ROOT}/shims[^:]*||" | sed -e "s|^${DALIAS_ROOT}/shims:||")
+cmd=$(command -v ${alias_name} || true)
+if [[ -n "${cmd}" ]]; then
+	PATH="${orig_path}"
+	exec "${cmd}" "$@"
 fi
 
 # Nothing left to do.  Bail.
-echo "dalias: $dalias_command: command not found" >&2
+echo "dalias: ${alias_name}: command not found" >&2
 exit 127

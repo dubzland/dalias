@@ -1,4 +1,4 @@
-if [[ -z "$DALIAS_TEST_DIR" ]]; then
+if [[ -z "${DALIAS_TEST_DIR}" ]]; then
 	DALIAS_TEST_DIR="${BATS_TMPDIR}/dalias"
 	export DALIAS_TEST_DIR="$(mktemp -d "${DALIAS_TEST_DIR}.XXX")" # 2>/dev/null || echo "$DALIAS_TEST_DIR")"
 	export DALIAS_ROOT="${DALIAS_TEST_DIR}/root"
@@ -18,7 +18,7 @@ fi
 # }
 
 teardown() {
-	rm -rf "$DALIAS_TEST_DIR"
+	rm -rf "${DALIAS_TEST_DIR}"
 }
 
 failit() {
@@ -35,17 +35,29 @@ assert() {
 	fi
 }
 
+assert_output() {
+	local expected
+	if [[ $# -eq 0 ]]; then
+		expected=$(cat -)
+	else
+		expected="$1"
+	fi
+	assert_equal "${expected}" "${output}"
+}
+
 assert_success() {
-	if [[ "$status" -ne 0 ]]; then
-		failit "failed with status code $status"
+	if [[ "${status}" -ne 0 ]]; then
+		failit "failed with status code ${status}"
 	elif [[ "$#" -gt 0 ]]; then
-		echo "foo"
+		assert_output "$1"
 	fi
 }
 
 assert_failure() {
-	if [[ "$status" -eq 0 ]]; then
+	if [[ "${status}" -eq 0 ]]; then
 		failit "expected failure, received success"
+	else
+		assert_output "$1"
 	fi
 }
 
@@ -63,7 +75,7 @@ assert_line() {
 	else
 		local line
 		for line in "${lines[@]}"; do
-			if [[ "$line" = "$1" ]]; then return 0; fi
+			if [[ "${line}" = "$1" ]]; then return 0; fi
 		done
 		failit "did not find line: \`$1'"
 	fi

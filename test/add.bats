@@ -30,10 +30,19 @@ load test_helper
 	assert [ -x "${DALIAS_LOCAL}/foo" ]
 }
 
+@test "adds the alias to the global store" {
+	assert [ ! -h "${DALIAS_ROOT}/links.csv" ]
+	run dalias-add foo bar
+	assert_success
+	assert [ -f "${DALIAS_ROOT}/links.csv" ]
+	assert_equal $(grep "foo," "${DALIAS_ROOT}/links.csv" || true) "foo,${DALIAS_LOCAL}/foo"
+}
+
 @test "fails with existing local alias" {
 	mkdir -p "${DALIAS_LOCAL}"
 	touch "${DALIAS_LOCAL}/foo"
 	chmod +x "${DALIAS_LOCAL}/foo"
 	run dalias-add foo bar
-	assert_failure
+	assert_failure "dalias: foo is already aliased"
 }
+

@@ -2,8 +2,12 @@
 
 set -e
 
-if [[ ! -d "$DALIAS_ROOT/shims" ]]; then
-	mkdir -p "$DALIAS_ROOT/shims"
+if [[ ! -d "${DALIAS_ROOT}/shims" ]]; then
+	mkdir -p "${DALIAS_ROOT}/shims"
+fi
+
+if [[ ! -d "${DALIAS_ROOT}/links" ]]; then
+	mkdir -p "${DALIAS_ROOT}/links"
 fi
 
 cat <<EOS
