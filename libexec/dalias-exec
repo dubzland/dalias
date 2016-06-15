@@ -5,7 +5,6 @@ set -e
 alias_name="$1"
 shift
 
-echo "${DALIAS_LOCAL}/${alias_name}"
 if [[ -x "${DALIAS_LOCAL}/${alias_name}" ]]; then
 	exec "${DALIAS_LOCAL}/${alias_name}" $@
 fi
