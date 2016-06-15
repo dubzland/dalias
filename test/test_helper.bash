@@ -14,6 +14,12 @@ if [[ -z "${DALIAS_TEST_DIR}" ]]; then
 	export PATH
 fi
 
+make_dir() {
+	for dir in "$@"; do
+		[ -d "${dir}" ] || mkdir -p "${dir}"
+	done
+}
+
 teardown() {
 	rm -rf "${DALIAS_TEST_DIR}"
 }
