@@ -1,0 +1,10 @@
+---
+image: bats/bats
+
+services:
+  - docker:19.03.1-dind
+
+bats:
+  stage: test
+  script:
+    - bats test
