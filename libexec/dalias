@@ -3,7 +3,7 @@
 set -e
 
 abort() {
-	{ if ["$#" -eq 0 [; then cat -
+	{ if [ "$#" -eq 0 ]; then cat -
 		else echo "dalias: $*"
 		fi
 	} >&2

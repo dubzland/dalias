@@ -86,3 +86,10 @@ fi
 if [[ "$(alias_count "${alias_name}")" -eq 0 ]]; then
 	delete_shim_symlink "${alias_name}"
 fi
+
+echo "When removing a dalias, it is important to update your shell's"
+echo "hash table.  Execute the following in all open shells:"
+echo ""
+echo "$ hash -d ${alias_name}"
+echo ""
+echo "Alternatively, simply restart your shell."
