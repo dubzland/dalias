@@ -1,5 +1,7 @@
 ---
-image: bats/bats
+image:
+  name: bats/bats:latest
+  entrypoint: [""]
 
 services:
   - docker:19.03.1-dind
@@ -7,4 +9,4 @@ services:
 bats:
   stage: test
   script:
-    - test
+    - bats test
